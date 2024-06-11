@@ -9,6 +9,7 @@ using Polynomials
 using PyPlot
 using LaTeXStrings
 
+include("Conv_Test.jl")
 include("D1.jl")
 include("G2.jl")
 include("Green_Utils.jl")
@@ -16,6 +17,9 @@ include("Generic_Utils.jl")
 include("HistPrint.jl")
 include("fprintTeX.jl")
 
+export Conv_Test
+export G2
+export SetDEData
 export HistPrint
 export PlotNew
 export Basic_Example

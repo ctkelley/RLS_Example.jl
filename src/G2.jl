@@ -37,10 +37,11 @@ function PlotNew(
     delta = 0.1,
     nonlinear = false,
     mu = 1.e-8,
-    regparm=.01
+    regparm=0.0
 )
     pdata = SetDEData(m, noiselev, delta, nonlinear, 1.e-8, regparm)
-    dran = collect(0.0:0.025:5.0)
+#    dran = collect(0.0:0.025:5.0)
+    dran = collect(0.0:0.01:0.5)
     DeltaRec=zeros(length(dran),3)
     pdata.ADel[1] = 0.0
     DLen=length(dran)
