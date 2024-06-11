@@ -1,2 +1,6 @@
 # RLS_Example.jl
-Example for Chen-Kelley Robust Least Squares paper
+This repo has the Julia code for the example in the paper
+
+__in-Max Optimization for Robust Nonlinear Least Squares Problems__
+
+by Xioujun Chen and C. T. Kelley
