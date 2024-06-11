@@ -5,10 +5,7 @@ using Optimization
 using OptimizationOptimJL
 using Zygote
 using Printf
-using MultiPrecisionArrays
-using MultiPrecisionArrays.Examples
 using Polynomials
-using TimsTools
 using PyPlot
 using LaTeXStrings
 

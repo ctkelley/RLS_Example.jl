@@ -79,7 +79,7 @@ end
 function SetDEData(m, noiselev, delta, nonlinear, mu, regparm; 
                    xinit = [], obj=de_obj)
     LD1 = D1(m)
-    G = Gmat(m + 2)
+    G = GmatRL(m + 2)
     AF = G[2:m+1, 2:m+1]
     Z = zeros(m, m)
     AF = I + Z
@@ -197,3 +197,26 @@ DRR = RBErr
 #        RBRes = RBRes,
     )
 end
+
+function GmatRL(n,T=Float64)
+    onet=T(1.0)
+    h = onet / (n-onet)
+    Ns = collect(0:1:n-1)
+    X = h*Ns
+    X[n]=onet
+    G = [greens(x, y, onet) for x in X, y in X]
+    G .*= h
+    return G
+end
+
+function greens(x, y, onet)
+    if x > y
+        gf = y * (onet - x)
+    else
+        gf = x * (onet - y)
+    end
+    return gf
+end
+
+
+
