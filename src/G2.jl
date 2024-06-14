@@ -32,7 +32,7 @@ end
 function PlotNew(
     m = 1000,
     k = 1;
-    larray=[.1;.2;.5],
+    larray=[.1;.2;.5;.7;1.0],
     noiselev = 0.0,
     delta = 0.1,
     nonlinear = false,
@@ -42,12 +42,13 @@ function PlotNew(
     pdata = SetDEData(m, noiselev, delta, nonlinear, 1.e-8, regparm)
 #    dran = collect(0.0:0.025:5.0)
     dran = collect(0.0:0.01:0.5)
-    DeltaRec=zeros(length(dran),3)
+    DeltaRec=zeros(length(dran),length(larray))
     pdata.ADel[1] = 0.0
     DLen=length(dran)
+    LLen=length(larray)
     LSout = G2(pdata)
     LSRes = LSout.NLRes
-    for ilam = 1:3
+    for ilam = 1:LLen
     pdata.ADel[1] = larray[ilam]
     RBout = G2(pdata)
     RBRes = RBout.NLRes
@@ -57,20 +58,27 @@ function PlotNew(
     delta=dran[il]
     STEP = One_Shot2(k, LSRes, RBRes, delta, pdata)
     DeltaRec[il,ilam]=STEP.DRB
+println("lambda = ", larray[ilam], "norm = ", STEP.DRB )
     end
     end
     plot(dran,DeltaRec[:,1],"k--")
     plot(dran,DeltaRec[:,2],"k-")
     plot(dran,DeltaRec[:,3],"k-.")
+    plot(dran,DeltaRec[:,4],"k_")
+    plot(dran,DeltaRec[:,5],"k.")
     delta1=larray[1]
     delta2=larray[2]
     delta3=larray[3]
+    delta4=larray[4]
+    delta5=larray[5]
     zref=zeros(DLen)
     plot(dran,zref,"k_")
 #    legend([L"$\lambda = \$delta1$",L"$\lambda = .5$"])
     legend([L"$\lambda = $"*"$delta1",
             L"$\lambda = $"*"$delta2",
-            L"$\lambda = $"*"$delta3"])
+            L"$\lambda = $"*"$delta3",
+            L"$\lambda = $"*"$delta4",
+            L"$\lambda = $"*"$delta5" ])
     xlabel(L"$\delta$")
     ylabel(L"$\Delta$")
 end

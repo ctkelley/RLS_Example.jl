@@ -1,3 +1,11 @@
+"""
+de_obj(x::AbstractVector{T}, pdata) where {T}
+
+Evaluate the objective function for the integral equations example.
+
+pdata is the precomputed/preallocated data. Do not change that
+      structure.
+"""
 function de_obj(x::AbstractVector{T}, pdata) where {T}
         A = pdata.A
         b = pdata.b
@@ -20,11 +28,22 @@ function de_obj(x::AbstractVector{T}, pdata) where {T}
     return deob
 end
 
+"""
+nlf(x)
+
+The nonlinearity in the integral equation example. AD friendly.
+"""
 function nlf(x)
     nlf = (sin(pi * x) + x^3) / (1.0 + x^2)
     return nlf
 end
 
+"""
+Fres(x,pdata)
+
+The full nonlinear residual. Regularization is optional if you
+set regparm > 0 when you build pdata. I do not do that in the paper.
+"""
 function Fres(x,pdata)
         A = pdata.A
         b = pdata.b
@@ -41,7 +60,12 @@ function Fres(x,pdata)
 return FV
 end
 
+"""
+chebmat(m = 100, n = 10)
 
+Evaluate the Chebyshev polynomials on the grid and build a matrix.
+Nothing much to see here. Move along.
+"""
 function chebmat(m = 100, n = 10)
     h = 1.0 / (m + 1)
     x = h:h:1.0-h
