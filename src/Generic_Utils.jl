@@ -38,7 +38,7 @@ function do_opt(pdata)
     optrobde = OptimizationFunction(nl_obj, Optimization.AutoZygote())
 #    optrobde = OptimizationFunction(nl_obj, Optimization.AutoEnzyme())
     prob = OptimizationProblem(optrobde, x0, pdata)
-    sol = solve(prob, BFGS(); g_tol = 1.e-14)
+    sol = solve(prob, BFGS(); g_tol = 1.e-12)
     #sol=solve(prob, Newton(); g_tol = 1.e-12)
     fval = sol.objective
     xval = sol.u

@@ -11,7 +11,7 @@ using LaTeXStrings
 
 include("Conv_Test.jl")
 include("D1.jl")
-include("G2.jl")
+include("Green_Example.jl")
 include("Green_Utils.jl")
 include("Generic_Utils.jl")
 include("HistPrint.jl")

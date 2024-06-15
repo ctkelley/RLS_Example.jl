@@ -1,24 +1,25 @@
-function HistPrint(
+function HistPrint(m=1000;
     noiselev = 0.0,
     lambda=.5,
     mu = 1.e-8,
+    regparm=.1,
     nonlinear = true)
-    rownum = 2
-    OutVals = zeros(rownum, 3) 
-    headers = ["\$\\delta\$", "\$\\Psi\$","\$\\| \\nabla \\Psi \\|\$"]
-    formats = "%7.2e & %7.2e & %7.2e" 
-delarray = [0.0, lambda]
-#for idel=1:2
-#delta=delarray[idel]
-Optout= T2(1000,1 ;noiselev = noiselev, delta = lambda,
-            mu = mu, nonlinear = nonlinear, regparm=0.0)
-OutVals[1,1] = 0.0
-OutVals[1, 2] = Optout.LSout.fval
-OutVals[1, 3] = Optout.LSout.gradnorm
-OutVals[2,1] = lambda
-OutVals[2, 2] = Optout.RBout.fval
-OutVals[2, 3] = Optout.RBout.gradnorm
+    larray=[0.0, 0.0005, 0.001, 0.01, .1, 1.0]
+    rownum = length(larray)
+    OutVals = zeros(rownum,3)
+    headers = ["\$\\lambda\$", "\$\\Psi_\\lambda\$", 
+            "\$\\| \\nabla \\Psi_\\lambda \\|\$"]
+    formats = "%7.2e & %7.2e & %7.2e"
+    pdata = SetDEData(m, noiselev, 0.0, nonlinear, mu, regparm)
+    for ilam=1:rownum
+       pdata.ADel[1] = larray[ilam] 
+       optout = do_opt(pdata)
+       OutVals[ilam,1] =larray[ilam]
+       OutVals[ilam,2] = optout.fval
+       OutVals[ilam,3] = optout.gradnorm
+    end
 fprintTeX(headers, formats, OutVals)
-OutVals
 end
+
+
 
