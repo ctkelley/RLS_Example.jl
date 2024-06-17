@@ -40,7 +40,7 @@ function Fres(x,pdata)
         nonlinear = pdata.nonlinear
         mu = pdata.mu
         z = TP * x
-        h1n = regparm*TPD * x
+        h1n = sqrt(regparm)*TPD * x
         nonlinear ? GV = A * nlf.(z) .- b : GV = A * z .- b
         FV = [GV;h1n]
 return FV

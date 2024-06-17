@@ -15,7 +15,7 @@ function PlotNew(
     nonlinear = true,
     mu = 1.e-8,
 # regparm > 0 -> H1 regularization
-    regparm=0.1,
+    regparm=0.01,
 # longplot = false -> figure 1
 # longplot = true -> figure 2
     longplot = false
