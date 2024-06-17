@@ -5,13 +5,16 @@ __Min-Max Optimization for Robust Nonlinear Least Squares Problems__
 
 by Xiaojun Chen and C. T. Kelley
 
-You must know enough about Julia to
+You must know enough about Julia and GitHub to
 
    - Use the package manager
-     
    - Know where to put projects so you can get to them with ```using XXX```
+   - Clone a GitHub repo.
 
 This repo is a Julia project __RLS_Example.jl__ . The codes in this project produce the tables and figures in the paper. To get started
+
+  - Install the packages: LaTeXStrings, Optimization, OptimizationOptimJL, Polynomials, Printf, PyPlot, Zygote
+      - [How to install packages](https://datatofish.com/install-package-julia/)
 
   - Clone this repo as RLS_Example.jl and either
   
