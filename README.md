@@ -22,7 +22,7 @@ This repo is a Julia project __RLS_Example.jl__ . The codes in this project prod
         
     - cd to the src subdirectory of __RLS_Example.jl__ and run it from in there
         
-  - Fire up Julia and type ```using RLS_Example``` at the Julia prompt
+  - Start Julia and type ```using RLS_Example``` at the Julia prompt
   
 To make Table 5.1 type ```HistPrint()``` at the Julia prompt.
 
