@@ -24,40 +24,62 @@ This repo is a Julia project __RLS_Example.jl__ . The codes in this project prod
         
   - Start Julia and type ```using RLS_Example``` at the Julia prompt
   
-To make Table 5.1 type ```HistPrint()``` at the Julia prompt.
+To make the tables type ```tables()``` at the Julia prompt.
 
-There are two figures. They differ only in the range of delta.  To make the figures type
+To make the figures type ```figures()``` at the Julia prompt.
 
-  - ```PlotNew()``` at the prompt to get Figure 5.1 and
-  - ```PlotNew(; longplot=true)``` to get Figure 5.2
+Nothing in this repo pretends to be a general purpose project and its only mission is to make the figures/tables for the paper.
 
-Nothing in the repo pretends to be a general purpose project and its only mission is to make the figures/tables for the paper.
-
-Here is an example of how one would use the code to print the table.
+Here is an example of how one would use the code to print the tables.
 
 ```
-               _
-   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+    _       _ _(_)_     |  Documentation: https://docs.julialang.org
   (_)     | (_) (_)    |
    _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
   | | | | | | |/ _` |  |
-  | | |_| | | | (_| |  |  Version 1.10.4 (2024-06-04)
+  | | |_| | | | (_| |  |  Version 1.11.2 (2024-12-01)
  _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
 |__/                   |
+
 
 julia> using RLS_Example
 [ Info: Precompiling RLS_Example [9d6a3767-96d8-5986-83e8-8cac8e739f00]
 
-julia> HistPrint()
+julia> tables()
+Table 1
 \begin{tabular}{llll} 
 $\lambda$ &$\Psi_\lambda$ &$\| \nabla \Psi_\lambda \|$ &    slope \\ 
 \hline 
 0.00e+00 & 2.21e-02 & 1.14e-12 & 0.00e+00   \\ 
-5.00e-04 & 2.65e-02 & 4.90e-13 & 4.68e-01   \\ 
-1.00e-03 & 3.07e-02 & 4.84e-13 & 4.69e-01   \\ 
-1.00e-02 & 1.07e-01 & 4.31e-11 & 4.78e-01   \\ 
-1.00e-01 & 8.70e-01 & 8.63e-10 & 4.82e-01   \\ 
-1.00e+00 & 8.49e+00 & 2.30e-08 & 4.82e-01   \\ 
+1.00e-01 & 8.30e-01 & 2.27e-12 & 7.27e-01   \\ 
+1.00e+00 & 5.05e+00 & 2.49e-11 & 6.15e+00   \\ 
+5.00e+00 & 7.72e+00 & 2.44e-09 & 8.16e+00   \\ 
+1.00e+01 & 8.85e+00 & 6.24e-10 & 8.27e+00   \\ 
+1.00e+02 & 1.25e+01 & 5.69e-08 & 8.44e+00   \\ 
+\hline 
+\end{tabular} 
+Table 2
+\begin{tabular}{llll} 
+$\lambda$ &$\Psi_\lambda$ &$\| \nabla \Psi_\lambda \|$ &    slope \\ 
+\hline 
+0.00e+00 & 4.53e-02 & 1.03e-15 & 0.00e+00   \\ 
+1.00e+00 & 1.17e+01 & 1.69e-11 & 8.29e-01   \\ 
+5.00e-01 & 5.97e+00 & 2.02e-11 & 4.25e-01   \\ 
+1.00e+01 & 8.02e+01 & 2.97e-12 & 8.09e+00   \\ 
+1.00e+02 & 1.78e+02 & 2.80e-08 & 1.15e+01   \\ 
+2.00e+02 & 2.22e+02 & 3.17e-08 & 1.17e+01   \\ 
+\hline 
+\end{tabular} 
+Table 3
+\begin{tabular}{llll} 
+$\lambda$ &$\Psi_\lambda$ &$\| \nabla \Psi_\lambda \|$ &    slope \\ 
+\hline 
+0.00e+00 & 4.53e-02 & 1.03e-15 & 0.00e+00   \\ 
+1.00e+00 & 1.17e+01 & 1.69e-11 & 8.76e+00   \\ 
+5.00e-01 & 5.97e+00 & 2.02e-11 & 2.65e+00   \\ 
+1.00e+01 & 8.02e+01 & 2.97e-12 & 9.47e+01   \\ 
+1.00e+02 & 1.78e+02 & 2.80e-08 & 9.82e+01   \\ 
+2.00e+02 & 2.22e+02 & 3.17e-08 & 9.83e+01   \\ 
 \hline 
 \end{tabular} 
 ```
