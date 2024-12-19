@@ -9,31 +9,51 @@ PlotNew(;longplot=true) makes figure 2
 function PlotNew(
     m = 1000,
     k = 1;
-    larray=[.0005;.001;.01;.1;1.0],
     noiselev = 0.0,
     delta = 0.1,
     nonlinear = true,
     mu = 1.e-8,
 # regparm > 0 -> H1 regularization
     regparm=0.01,
+    useC = true,
 # longplot = false -> figure 1
 # longplot = true -> figure 2
-    longplot = false
+    longplot = false,
+    lasso = [false]
 )
-    pdata = SetDEData(m, noiselev, delta, nonlinear, 1.e-8, regparm)
-    longplot ?  dran = collect(0.0:0.025:5.0) : dran = collect(0.0:0.0001:0.005)
+lassoflag = lasso[1]
+(larray, dran) = PlotSet(lassoflag, nonlinear, longplot)
+    pdata = SetDEData(m, noiselev, delta, nonlinear, 1.e-8, regparm; 
+            useC=useC, lasso=lasso)
     DeltaRec=zeros(length(dran),length(larray))
-    pdata.ADel[1] = 0.0
+# Setting delta = 0 means you're getting the least squares (non-robust)
+# solution. 
     DLen=length(dran)
     LLen=length(larray)
+if ~lassoflag
+    pdata.ADel[1] = 0.0
     LSout = G2(pdata)
-    LSRes = LSout.NLRes
-    pdata.x0 .= LSout.xval
+    LSRes = LSout.NLRes.FV
+    m=length(LSRes); mx=Int(m/2)
+    useC ? (CLSRes = LSRes[1:mx]) : (CLSRes = LSRes)
+end
+#    pdata.x0 .= LSout.xval
     for ilam = 1:LLen
     pdata.ADel[1] = larray[ilam]
+if lassoflag
+# Lasso solution?
+(LSRes, CLSRes) = Lasso_Base(pdata, lassoflag)
+end
+#
+# RLS solutioin
+    pdata.lasso[1]=false
     RBout = G2(pdata)
+#
     pdata.x0 .= RBout.xval
-    RBRes = RBout.NLRes
+    RBRes = RBout.NLRes.FV
+    m=length(LSRes); mx=Int(m/2)
+    useC ? (CRBRes = RBRes[1:mx]) : (CRBRes = RBRes)
+#    RBRes = RBout.NLRes
 #
 # The only way either of the conditions for a warning could be
 # violated is if the robust solution and the LS solution are near
@@ -41,18 +61,17 @@ function PlotNew(
 # off, so do not do that.
 #
  ( norm(RBRes) < norm(LSRes) ) && @warn("norm error")
- ( norm(LSRes,1) < norm(RBRes,1) ) && @warn("L1 norm error")
+ ( norm(CLSRes,1) < norm(CRBRes,1) ) && @warn("L1 norm error")
     for il = 1:DLen
     delta=dran[il]
     STEP = One_Shot2(k, LSRes, RBRes, delta, pdata)
     DeltaRec[il,ilam]=STEP.DRB
-#println("lambda = ", larray[ilam], "norm = ", STEP.DRB )
     end
     end
     plot(dran,DeltaRec[:,1],"k--")
     plot(dran,DeltaRec[:,2],"k-")
     plot(dran,DeltaRec[:,3],"k-.")
-    plot(dran,DeltaRec[:,4],"k_")
+    plot(dran,DeltaRec[:,4],"k.")
     plot(dran,DeltaRec[:,5],"k:")
     delta1=larray[1]
     delta2=larray[2]
@@ -75,14 +94,14 @@ end
 
 """
 SetDEData(m, noiselev, delta, nonlinear, mu, regparm; 
-                   xinit = [], obj=de_obj)
+                   xinit = [], obj=de_obj, useC=false)
 
 Initialize the data structure and preallocate as much as possible.
 
 de_obj is the objective function for this problem.
 """
 function SetDEData(m, noiselev, delta, nonlinear, mu, regparm; 
-                   xinit = [], obj=de_obj)
+                   xinit = [], obj=de_obj, useC=false, lasso=[false])
     LD1 = D1(m)
     G = GmatRL(m + 2)
     AF = G[2:m+1, 2:m+1]
@@ -132,7 +151,9 @@ function SetDEData(m, noiselev, delta, nonlinear, mu, regparm;
         ADel = ADel,
         xe = xe,
         obj = obj,
-        regparm = regparm
+        regparm = regparm,
+        useC = useC,
+        lasso = lasso
     )
     return pdata
 end
@@ -145,9 +166,11 @@ Return the output from the optimizer and the data you need
 to make the plots and tables.
 """
 function G2(pdata)
+# When do_opt sees delta = 0 you get the least squares solution
     optout = do_opt(pdata)
     TP = pdata.TP
     xe = pdata.xe
+    useC = pdata.useC
     (mt, nt) = size(TP)
     if mt > 1
         zval = TP * optout.xval
@@ -159,7 +182,11 @@ function G2(pdata)
     gradnorm = optout.gradnorm
     success = optout.success
     delx = norm(zval - xe, Inf)
-    NLRes = Fres(optout.xval, pdata)
+#    NLRes = Fres(optout.xval, pdata)
+    GLRes = Fres(optout.xval, pdata)
+#    NLRes = Xres(optout.xval,pdata)
+#    println(norm(GLRes.FV - NLRes,Inf))
+#    NLRes = GLRes.FV
     return (
         xval = optout.xval,
         fval = fval,
@@ -167,14 +194,19 @@ function G2(pdata)
         delx = delx,
         success = success,
         sol = sol,
-        NLRes = NLRes,
+#        NLRes = NLRes,
+        NLRes = GLRes,
     )
 end
 
 
 function One_Shot2(k, LSRes, RBRes, delta, pdata)
-LSErr = norm(LSRes).^2 + 2.0*delta*norm(LSRes,1)
-RBErr = norm(RBRes).^2 + 2.0*delta*norm(RBRes,1)
+m=length(LSRes); mx=Int(m/2); 
+useC = pdata.useC
+useC ? (CLSRes=LSRes[1:mx]) : (CLSRes=LSRes)
+useC ? (CRBRes=RBRes[1:mx]) : (CRBRes=RBRes)
+LSErr = norm(LSRes).^2 + 2.0*delta*norm(CLSRes,1)
+RBErr = norm(RBRes).^2 + 2.0*delta*norm(CRBRes,1)
 DRB = LSErr - RBErr
 DRL = LSErr
 DRR = RBErr
@@ -205,5 +237,28 @@ function greens(x, y, onet)
     return gf
 end
 
+function PlotSet(lassoflag, nonlinear, longplot)
+if nonlinear
+    larray=[0.0, .1, 1.0, 5.0, 10.0, 100.0]
+    longplot ?  dran = collect(0.0:0.025:5.0) : dran = collect(0.0:.1:1.0)
+end
+if ~nonlinear
+    larray=[0.0, .5, 1.0, 10.0, 100.0, 200.0]
+    longplot ?  dran = collect(0.0:1.0:50.0) : dran = collect(0.0:1.0:20.0)
+    if lassoflag
+    larray=[0.0, .5, 1.0, 10.0, 100.0, 200.0]
+    longplot ?  dran = collect(0.0:1.0:50.0) : dran = collect(0.0:.1:1.0)
+    end
+end
+return (larray, dran)
+end
 
-
+function Lasso_Base(pdata, lassoflag)
+lassoflag && (pdata.lasso[1]=true)
+useC=pdata.useC
+LSout=G2(pdata)
+LSRes = LSout.NLRes.FV
+m=length(LSRes); mx=Int(m/2)
+useC ? (CLSRes = LSRes[1:mx]) : (CLSRes = LSRes)
+return (LSRes, CLSRes)
+end

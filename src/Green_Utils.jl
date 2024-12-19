@@ -1,24 +1,22 @@
 function de_obj(x::AbstractVector{T}, pdata) where {T}
-if false
-        A = pdata.A
-        b = pdata.b
-        m = pdata.m
-        TP = pdata.TP
-        TPD = pdata.TPD
-        regparm = pdata.regparm
         nonlinear = pdata.nonlinear
-        mu = pdata.mu
-        z = TP * x
-        h1n = regparm*TPD * x
-        nonlinear ? GV = A * nlf.(z) .- b : GV = A * z .- b
-        FV = [GV;h1n]
-else
+        useC = pdata.useC
         mu=pdata.mu
-        FV=Fres(x,pdata)
-end
+#        FVout=Fres(x,pdata)
+#        FV = FVout.FV
+#        GV = FVout.GV
+#     FV = Xres(x,pdata)
+     FVout = Fres(x,pdata)
+     FV = FVout.FV
+     GV = FVout.GV
+    useC ? sl1n=sL1(GV,mu) : sl1n=sL1(FV,mu)
+#    sl1n = sL1(FV,mu)
+     sl1x = sL1(x,mu)
     delta = pdata.ADel[1]
+    pdata.lasso[1] ? l1part = sl1x : l1part = sl1n
     if delta > 1.e-8
-        deob = znorm(FV) + 2.0 * delta * sL1(FV, mu)
+        deob = znorm(FV) + 2.0*delta *l1part
+#        deob = znorm(FV) + 2.0 * delta * sl1n
     else 
         deob = znorm(FV)
     end
@@ -28,6 +26,12 @@ end
 function nlf(x)
     nlf = (sin(pi * x) + x^3) / (1.0 + x^2)
     return nlf
+end
+
+function Xres(x,pdata)
+Fout=Fres(x,pdata)
+FV = Fout.FV
+return FV
 end
 
 function Fres(x,pdata)
@@ -43,7 +47,8 @@ function Fres(x,pdata)
         h1n = sqrt(regparm)*TPD * x
         nonlinear ? GV = A * nlf.(z) .- b : GV = A * z .- b
         FV = [GV;h1n]
-return FV
+        FVout = (FV=FV, GV=GV)
+        return FVout
 end
 
 
