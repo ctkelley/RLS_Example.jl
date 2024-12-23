@@ -239,15 +239,24 @@ end
 
 function PlotSet(lassoflag, nonlinear, longplot)
 if nonlinear
-    larray=[0.0, .1, 1.0, 5.0, 10.0, 100.0]
-    longplot ?  dran = collect(0.0:0.025:5.0) : dran = collect(0.0:.1:1.0)
+#    larray=[0.0, .1, 1.0, 5.0, 10.0, 100.0]
+    larray=[0.0005, .001, 0.01, .1, 10.0]
+#    larray=[0.0005, .001, 0.01, 0.1, 1.0]
+#    longplot ?  dran = collect(0.0:0.025:5.0) : dran = collect(0.0:.1:2.0)
+    longplot ?  dran = collect(0.0:1.0:20.0) : dran = collect(0.0:.1:2.0)
 end
+    larray=[0.0005, .001, 0.01, .1, 1.0]
 if ~nonlinear
-    larray=[0.0, .5, 1.0, 10.0, 100.0, 200.0]
-    longplot ?  dran = collect(0.0:1.0:50.0) : dran = collect(0.0:1.0:20.0)
+#    larray=[0.0, .5, 1.0, 10.0, 100.0]
+#    larray=[0.0005, .001, 0.01, .1, 10.0]
+#    larray=[0.0, .01, .1, 1.0, 100.0]
+#    longplot ?  dran = collect(0.0:1.0:50.0) : dran = collect(0.0:1.0:20.0)
+    longplot ?  dran = collect(0.0:1.0:20.0) : dran = collect(0.0:.1:2.0)
     if lassoflag
-    larray=[0.0, .5, 1.0, 10.0, 100.0, 200.0]
-    longplot ?  dran = collect(0.0:1.0:50.0) : dran = collect(0.0:.1:1.0)
+#    larray=[0.0, .5, 1.0, 10.0, 100.0]
+#    larray=[0.0005, .001, 0.01, .1, 10.0]
+#    longplot ?  dran = collect(0.0:1.0:50.0) : dran = collect(0.0:.1:1.0)
+    longplot ?  dran = collect(0.0:1.0:20.0) : dran = collect(0.0:.1:2.0)
     end
 end
 return (larray, dran)
