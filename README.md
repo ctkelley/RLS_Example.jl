@@ -1,7 +1,7 @@
 # RLS_Example.jl
 This repo has the Julia code for the example in the paper
 
-__Min-Max Optimization for Robust Nonlinear Least Squares Problems__
+__Robust solutions of nonlinear least squares problems via min-max optimization__
 
 by Xiaojun Chen and C. T. Kelley
 
