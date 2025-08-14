@@ -14,7 +14,7 @@ You must know enough about Julia and GitHub to
 This repo is a Julia project __RLS_Example.jl__ . The codes in this project produce the tables and figures in the paper. To get started
 
   - Install the packages: LaTeXStrings, Optimization, OptimizationOptimJL, Polynomials, Printf, PyPlot, Zygote
-      - [How to install packages](https://datatofish.com/install-package-julia/)
+      - [How to install packages](https://docs.julialang.org/en/v1/stdlib/Pkg/)
 
   - Clone this repo as RLS_Example.jl and either
   
